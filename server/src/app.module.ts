@@ -5,6 +5,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import { APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { MovieModule } from './movie/movie.module';
+import { GenreModule } from './genre/genre.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { MovieModule } from './movie/movie.module';
       signOptions: { expiresIn: '6000s' },
     }),
     MovieModule,
+    GenreModule,
   ],
   providers: [
     PrismaService,

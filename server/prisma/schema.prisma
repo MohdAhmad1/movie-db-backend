@@ -17,6 +17,7 @@ model User {
   email         String          @unique
   password      String
   RefreshTokens RefreshTokens[]
+  Movie         Movie[]
 }
 
 // seperate table for multiple signups at a time from same account
@@ -25,4 +26,47 @@ model RefreshTokens {
   user   User   @relation(fields: [userId], references: [id])
   userId String
   token  String @unique
+}
+
+model Movie {
+  id          String       @id @default(uuid())
+  title       String
+  rating      Int
+  genre       String
+  releaseDate DateTime
+  owner       User         @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  casts       MovieCast[]
+  genres      MovieGenre[]
+}
+
+model MovieCast {
+  Movie   Movie  @relation(fields: [movieId], references: [id])
+  movieId String
+  Cast    Cast   @relation(fields: [castId], references: [id])
+  castId  String
+
+  @@id([movieId, castId])
+}
+
+model Cast {
+  id            String      @id @default(uuid())
+  name          String
+  name_computed String      @unique
+  Movie         MovieCast[]
+}
+
+model MovieGenre {
+  Genre   Genre  @relation(fields: [genreId], references: [id])
+  genreId String
+  Movie   Movie  @relation(fields: [movieId], references: [id])
+  movieId String
+
+  @@id([movieId, genreId])
+}
+
+model Genre {
+  id    String       @id @default(uuid())
+  name  String       @unique
+  Movie MovieGenre[]
 }
