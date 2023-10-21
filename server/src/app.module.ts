@@ -6,6 +6,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { MovieModule } from './movie/movie.module';
 import { GenreModule } from './genre/genre.module';
+import { ActorModule } from './actors/actor.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { GenreModule } from './genre/genre.module';
     }),
     MovieModule,
     GenreModule,
+    ActorModule,
   ],
   providers: [
     PrismaService,

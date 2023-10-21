@@ -43,17 +43,19 @@ model Movie {
 model MovieCast {
   Movie   Movie  @relation(fields: [movieId], references: [id])
   movieId String @db.Uuid()
-  Cast    Cast   @relation(fields: [castId], references: [id])
+  Cast    Actors @relation(fields: [castId], references: [id])
   castId  String @db.Uuid()
 
   @@id([movieId, castId])
 }
 
-model Cast {
+model Actors {
   id            String      @id @default(uuid()) @db.Uuid()
   name          String
   name_computed String      @unique
   Movie         MovieCast[]
+
+  @@map("Cast")
 }
 
 model MovieGenre {
