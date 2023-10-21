@@ -2,25 +2,21 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import { PrismaService } from 'src/prisma.service';
 import { LoginDTO } from './dto/login.dto';
 import { RegisterDTO } from './dto/register.dto';
+import { UserService } from 'src/user/user.service';
 
 // I am just directly using bcrypt instead of Dependncy Injection
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly userService: UserService,
   ) {}
 
   async login(creds: LoginDTO) {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        email: creds.email.toLowerCase(),
-      },
-    });
+    const user = await this.userService.findUserByEmail(creds.email);
 
     if (!user) throw new UnauthorizedException();
 
@@ -37,14 +33,11 @@ export class AuthService {
   }
 
   async register(data: RegisterDTO) {
-    // I am returning data for testing purpose only
-    return this.prisma.user.create({
-      data: {
-        email: data.email.toLowerCase(),
-        firstName: data.firstName,
-        lastName: data.lastName,
-        password: await bcrypt.hash(data.password, 10),
-      },
+    return this.userService.createUser({
+      email: data.email.toLowerCase(),
+      firstName: data.firstName,
+      lastName: data.lastName,
+      password: await bcrypt.hash(data.password, 10),
     });
   }
 
