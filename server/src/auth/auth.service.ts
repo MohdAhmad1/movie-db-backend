@@ -69,7 +69,7 @@ export class AuthService {
 
     if (!refreshTokenEntity) throw new UnauthorizedException();
 
-    this.prisma.refreshTokens.delete({
+    await this.prisma.refreshTokens.delete({
       where: { token: refreshTokenEntity.token },
     });
 

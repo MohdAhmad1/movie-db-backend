@@ -19,6 +19,7 @@ model User {
   RefreshTokens RefreshTokens[]
 }
 
+// seperate table for multiple signups at a time from same account
 model RefreshTokens {
   id     String @id @default(uuid())
   user   User   @relation(fields: [userId], references: [id])
