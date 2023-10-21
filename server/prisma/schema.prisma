@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(uuid())
+  id            String          @id @default(uuid()) @db.Uuid()
   firstName     String
   lastName      String
   email         String          @unique
@@ -22,35 +22,35 @@ model User {
 
 // seperate table for multiple signups at a time from same account
 model RefreshTokens {
-  id     String @id @default(uuid())
+  id     String @id @default(uuid()) @db.Uuid()
   user   User   @relation(fields: [userId], references: [id])
-  userId String
+  userId String @db.Uuid()
   token  String @unique
 }
 
 model Movie {
-  id          String       @id @default(uuid())
+  id          String       @id @default(uuid()) @db.Uuid()
   title       String
   rating      Int
   genre       String
   releaseDate DateTime
   owner       User         @relation(fields: [ownerId], references: [id])
-  ownerId     String
+  ownerId     String       @db.Uuid()
   casts       MovieCast[]
   genres      MovieGenre[]
 }
 
 model MovieCast {
   Movie   Movie  @relation(fields: [movieId], references: [id])
-  movieId String
+  movieId String @db.Uuid()
   Cast    Cast   @relation(fields: [castId], references: [id])
-  castId  String
+  castId  String @db.Uuid()
 
   @@id([movieId, castId])
 }
 
 model Cast {
-  id            String      @id @default(uuid())
+  id            String      @id @default(uuid()) @db.Uuid()
   name          String
   name_computed String      @unique
   Movie         MovieCast[]
@@ -58,15 +58,15 @@ model Cast {
 
 model MovieGenre {
   Genre   Genre  @relation(fields: [genreId], references: [id])
-  genreId String
+  genreId String @db.Uuid()
   Movie   Movie  @relation(fields: [movieId], references: [id])
-  movieId String
+  movieId String @db.Uuid()
 
   @@id([movieId, genreId])
 }
 
 model Genre {
-  id    String       @id @default(uuid())
+  id    String       @id @default(uuid()) @db.Uuid()
   name  String       @unique
   Movie MovieGenre[]
 }

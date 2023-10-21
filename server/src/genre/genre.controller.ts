@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateGenreDTO } from './dto/create-genre.dto';
 import { GenreService } from './genre.service';
@@ -14,7 +14,7 @@ export class GenreController {
 
   @UseGuards(AuthGuard)
   @Post()
-  async createGenre(body: CreateGenreDTO) {
+  async createGenre(@Body() body: CreateGenreDTO) {
     return this.genreService.create(body);
   }
 }
