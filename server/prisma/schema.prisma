@@ -29,15 +29,15 @@ model RefreshTokens {
 }
 
 model Movie {
-  id          String       @id @default(uuid()) @db.Uuid()
+  id          String      @id @default(uuid()) @db.Uuid()
   title       String
   rating      Int
-  genre       String
   releaseDate DateTime
-  owner       User         @relation(fields: [ownerId], references: [id])
-  ownerId     String       @db.Uuid()
+  owner       User        @relation(fields: [ownerId], references: [id])
+  ownerId     String      @db.Uuid()
   casts       MovieCast[]
-  genres      MovieGenre[]
+  genre       Genre       @relation(fields: [genreId], references: [id])
+  genreId     String      @db.Uuid()
 }
 
 model MovieCast {
@@ -58,17 +58,8 @@ model Actors {
   @@map("Cast")
 }
 
-model MovieGenre {
-  Genre   Genre  @relation(fields: [genreId], references: [id])
-  genreId String @db.Uuid()
-  Movie   Movie  @relation(fields: [movieId], references: [id])
-  movieId String @db.Uuid()
-
-  @@id([movieId, genreId])
-}
-
 model Genre {
-  id    String       @id @default(uuid()) @db.Uuid()
-  name  String       @unique
-  Movie MovieGenre[]
+  id    String  @id @default(uuid()) @db.Uuid()
+  name  String  @unique
+  Movie Movie[]
 }
