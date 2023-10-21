@@ -8,7 +8,20 @@ export class MovieService {
   constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
-    this.prisma.movie.findMany();
+    return this.prisma.movie.findMany({
+      include: {
+        genre: true,
+        casts: true,
+        owner: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
+    });
   }
 
   async create(payload: CreateMovieDTO, user: Omit<User, 'password'>) {
