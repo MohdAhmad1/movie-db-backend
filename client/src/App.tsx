@@ -1,12 +1,13 @@
-import { Button, Text } from "@mantine/core";
+import { Route, Routes } from "react-router-dom";
+import Login from "./auth/Login";
 
 function App() {
   return (
-    <>
-      <Text>Click on the Vite and React logos to learn more</Text>
-
-      <Button>Hello</Button>
-    </>
+    <Routes>
+      <Route path="/auth">
+        <Route path="login" element={<Login />} />
+      </Route>
+    </Routes>
   );
 }
 
