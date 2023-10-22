@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
-import Login from "./auth/Login";
-import Signup from "./auth/Signup";
+import Login from "./pages/auth/Login";
+import Signup from "./pages/auth/Signup";
+import AuthenticatedLayout from "./components/AuthenticatedLayout";
 
 function App() {
   return (
@@ -9,6 +10,8 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
       </Route>
+
+      <Route path="/" element={<AuthenticatedLayout />}></Route>
     </Routes>
   );
 }
