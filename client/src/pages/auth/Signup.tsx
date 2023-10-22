@@ -15,7 +15,7 @@ import { AxiosError } from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import classes from "./AuthenticationTitle.module.css";
 import { signupApiCall } from "./auth.api";
-import { SignupSchema } from "./auth.schema";
+import { SignupSchema } from "../../schema/auth.schema";
 
 function Signup() {
   const navigate = useNavigate();

@@ -11,7 +11,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import classes from "./AuthenticationTitle.module.css";
 import { useForm, zodResolver } from "@mantine/form";
-import { LoginSchema } from "./auth.schema";
+import { LoginSchema } from "../../schema/auth.schema";
 import { useMutation } from "@tanstack/react-query";
 import { loginApiCall } from "./auth.api";
 import { AxiosError } from "axios";

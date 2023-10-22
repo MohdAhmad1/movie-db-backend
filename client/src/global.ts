@@ -34,8 +34,6 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(undefined, (error: AxiosError) => {
   const token = getToken();
 
-  debugger;
-
   _authorizing ??= axiosInstance
     .post(`${CONSTANTS.ApiBaseURL}/auth/refresh-roken`, {
       refreshToken: token?.refreshToken,

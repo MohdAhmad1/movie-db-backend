@@ -1,6 +1,6 @@
 import axios from "axios";
 import { CONSTANTS } from "../../global";
-import { LoginSchema, SignupSchema } from "./auth.schema";
+import { LoginSchema, SignupSchema } from "../../schema/auth.schema";
 
 export async function loginApiCall(data: Zod.infer<typeof LoginSchema>) {
   return axios

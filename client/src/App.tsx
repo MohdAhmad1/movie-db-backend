@@ -3,6 +3,9 @@ import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import AuthenticatedLayout from "./components/AuthenticatedLayout/AuthenticatedLayout";
 import Movies from "./pages/Movies";
+import CreateMovie from "./pages/CreateMovie";
+import Genre from "./pages/Genre";
+import Actors from "./pages/Actors";
 
 function App() {
   return (
@@ -16,6 +19,10 @@ function App() {
         <Route index element={<Navigate to="/movies" />} />
 
         <Route path="movies" element={<Movies />} />
+        <Route path="create-movie" element={<CreateMovie />} />
+
+        <Route path="genres" element={<Genre />} />
+        <Route path="actors" element={<Actors />} />
       </Route>
     </Routes>
   );

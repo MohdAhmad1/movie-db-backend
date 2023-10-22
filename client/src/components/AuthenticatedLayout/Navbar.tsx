@@ -1,29 +1,29 @@
 import { useState } from "react";
 import classes from "./Navbar.module.css";
 import { AppShell } from "@mantine/core";
+import { Link } from "react-router-dom";
 
 const navLinks = [
-  { link: "", label: "Movies" },
-  { link: "", label: "Genres" },
-  { link: "", label: "Actors" },
+  { link: "/", label: "Movies" },
+  { link: "/genres", label: "Genres" },
+  { link: "/actors", label: "Actors" },
 ];
 
 export function Navbar() {
   const [active, setActive] = useState("Movies");
 
   const links = navLinks.map((item) => (
-    <a
+    <Link
       className={classes.link}
       data-active={item.label === active || undefined}
-      href={item.link}
+      to={item.link}
       key={item.label}
-      onClick={(event) => {
-        event.preventDefault();
+      onClick={() => {
         setActive(item.label);
       }}
     >
       <span>{item.label}</span>
-    </a>
+    </Link>
   ));
 
   return (
