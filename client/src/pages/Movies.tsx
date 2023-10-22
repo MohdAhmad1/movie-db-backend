@@ -22,7 +22,33 @@ export default function Movies() {
 
       <LoadingOverlay visible={movieQuery.isLoading} />
 
-      <Table data={movieQuery.data ?? []} accessors={["name", "x"]} />
+      <Table
+        data={movieQuery.data ?? []}
+        accessors={[
+          "title",
+          "rating",
+          {
+            title: "Release Date",
+            render(data) {
+              return new Date(data.releaseDate).toLocaleString();
+            },
+          },
+          {
+            title: "Genre",
+            render(data) {
+              return data.genre.name;
+            },
+          },
+          {
+            title: "Cast",
+            render(data) {
+              return data.casts
+                .map((cast: Record<string, unknown>) => cast.name)
+                .join(", ");
+            },
+          },
+        ]}
+      />
     </div>
   );
 }

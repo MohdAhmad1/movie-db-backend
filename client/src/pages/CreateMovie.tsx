@@ -72,8 +72,6 @@ function CreateMovie() {
     },
   });
 
-  console.log(form.errors);
-
   return (
     <Container size={420} className={classes.container}>
       <div>

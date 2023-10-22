@@ -18,7 +18,7 @@ import {
 import { useLayoutEffect, useState } from "react";
 import classes from "./Table.module.css";
 
-type RowData = Record<string, string | number>;
+type RowData = Record<string, string>;
 
 interface ThProps {
   children: React.ReactNode;
@@ -78,9 +78,15 @@ function sortData(
   );
 }
 
+type AccessorString<T extends RowData[]> = keyof T[number];
+type AccessorObject<T extends RowData[]> = {
+  render(data: T[number]): JSX.Element | string;
+  title: string;
+};
+
 interface Props<T extends RowData[]> {
   data: T;
-  accessors: Array<keyof T[number]>;
+  accessors: Array<AccessorString<T> | AccessorObject<T>>;
 }
 
 function TableSort<T extends RowData[]>({ data, accessors }: Props<T>) {
@@ -127,9 +133,17 @@ function TableSort<T extends RowData[]>({ data, accessors }: Props<T>) {
 
   const rows = sortedData.map((row) => (
     <Table.Tr key={row.id}>
-      {accessors.map((accessor) => (
-        <Table.Td key={accessor.toString()}>{row[accessor]}</Table.Td>
-      ))}
+      {accessors.map((accessor) => {
+        if (typeof accessor === "string") {
+          return <Table.Td key={accessor.toString()}>{row[accessor]}</Table.Td>;
+        }
+
+        return (
+          <Table.Td key={(accessor as AccessorObject<T>).title}>
+            {(accessor as AccessorObject<T>).render(row)}
+          </Table.Td>
+        );
+      })}
     </Table.Tr>
   ));
 
@@ -155,16 +169,23 @@ function TableSort<T extends RowData[]>({ data, accessors }: Props<T>) {
       >
         <Table.Thead>
           <Table.Tr>
-            {accessors.map((accessor) => (
-              <Th
-                sorted={sortBy === String(accessor).toLowerCase()}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting(String(accessor).toLowerCase())}
-                key={String(accessor)}
-              >
-                {String(accessor)}
-              </Th>
-            ))}
+            {accessors.map((accessor) => {
+              const title =
+                typeof accessor === "string"
+                  ? accessor
+                  : (accessor as AccessorObject<T>).title;
+
+              return (
+                <Th
+                  sorted={sortBy === title.toLowerCase()}
+                  reversed={reverseSortDirection}
+                  onSort={() => setSorting(title.toLowerCase())}
+                  key={title}
+                >
+                  {title}
+                </Th>
+              );
+            })}
           </Table.Tr>
         </Table.Thead>
 
