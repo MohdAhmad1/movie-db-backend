@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from './prisma.service';
-import { AuthModule } from './auth/auth.module';
-import { ZodValidationPipe } from 'nestjs-zod';
 import { APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
-import { MovieModule } from './movie/movie.module';
-import { GenreModule } from './genre/genre.module';
+import { ZodValidationPipe } from 'nestjs-zod';
 import { ActorModule } from './actors/actor.module';
+import { AuthModule } from './auth/auth.module';
+import { GenreModule } from './genre/genre.module';
+import { MovieModule } from './movie/movie.module';
+import { PrismaService } from './prisma.service';
+
+console.log(process.env.JWT_EXPIRY);
 
 @Module({
   imports: [
@@ -14,9 +16,7 @@ import { ActorModule } from './actors/actor.module';
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      // signOptions: { expiresIn: '60s' },
-      // long lived tokens for testing purpose
-      signOptions: { expiresIn: '6000s' },
+      signOptions: { expiresIn: process.env.JWT_EXPIRY + 's' },
     }),
     MovieModule,
     GenreModule,

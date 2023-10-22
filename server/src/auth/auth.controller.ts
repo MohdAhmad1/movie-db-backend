@@ -5,12 +5,12 @@ import {
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
-import { LoginDTO } from './dto/login.dto';
-import { RegisterDTO } from './dto/register.dto';
-import { RefreshTokenDTO } from './dto/refresh-token.dto';
-import { UserService } from 'src/user/user.service';
-import { TokenService } from './token.service';
 import * as bcrypt from 'bcrypt';
+import { UserService } from 'src/user/user.service';
+import { LoginDTO } from './dto/login.dto';
+import { RefreshTokenDTO } from './dto/refresh-token.dto';
+import { RegisterDTO } from './dto/register.dto';
+import { TokenService } from './token.service';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +29,9 @@ export class AuthController {
 
     if (!passCompareRes) throw new UnauthorizedException();
 
-    const accessToken = this.tokenService.generateAccessToken(user.id);
+    delete user.password;
+
+    const accessToken = await this.tokenService.generateAccessToken(user.id);
 
     const refreshToken = this.tokenService.generateRefreshToken();
 
@@ -44,6 +46,7 @@ export class AuthController {
     return {
       accessToken,
       refreshToken,
+      user,
     };
   }
 
@@ -79,16 +82,28 @@ export class AuthController {
   @Post('/refresh-token')
   async refreshToken(@Body() body: RefreshTokenDTO) {
     // first check if the current refresh token is valid
-    await this.tokenService.validateRefreshToken(body.refresh_token);
+    const tokenValidationResult = await this.tokenService.validateRefreshToken(
+      body.refresh_token,
+    );
 
     const refreshToken = this.tokenService.generateRefreshToken();
 
-    await this.userService.updateUser('user_id', {
-      RefreshTokens: {
-        create: {
-          token: refreshToken,
+    const user = await this.userService.updateUser(
+      tokenValidationResult.userId,
+      {
+        RefreshTokens: {
+          create: {
+            token: refreshToken,
+          },
         },
       },
-    });
+    );
+
+    const accessToken = await this.tokenService.generateAccessToken(user.id);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 }

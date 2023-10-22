@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as crypto from 'crypto';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -10,13 +11,18 @@ export class TokenService {
   ) {}
 
   async generateAccessToken(sub: string) {
-    const token = await this.jwtService.signAsync({
-      sub,
-      issuer: 'https://movies.db.com', // to be replaced by env variables,
-      audience: 'https://movies.db.com',
-      exp: Date.now() + 60 * 3000, // 3hours from now
-      iat: Date.now(),
-    });
+    const token = await this.jwtService.signAsync(
+      {
+        sub,
+        issuer: 'https://movies.db.com', // to be replaced by env variables,
+        audience: 'https://movies.db.com',
+        exp: Date.now() + Number(process.env.JWT_EXPIRY), // 3hours from now
+        iat: Date.now(),
+      },
+      {
+        secret: process.env.JWT_SECRET,
+      },
+    );
 
     return token;
   }
@@ -34,6 +40,11 @@ export class TokenService {
 
     // expire token on single use
     await this.deleteRefreshToken(previous_token);
+
+    return {
+      isValid: true,
+      userId: token.userId,
+    };
   }
 
   private async deleteRefreshToken(token: string) {
