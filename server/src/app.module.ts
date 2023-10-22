@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { GenreModule } from './genre/genre.module';
 import { MovieModule } from './movie/movie.module';
 import { PrismaService } from './prisma.service';
+import { UserModule } from './user/user.module';
 
 console.log(process.env.JWT_EXPIRY);
 
@@ -21,6 +22,7 @@ console.log(process.env.JWT_EXPIRY);
     MovieModule,
     GenreModule,
     ActorModule,
+    UserModule,
   ],
   providers: [
     PrismaService,
