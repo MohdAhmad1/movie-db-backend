@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { LoadingOverlay, Title } from "@mantine/core";
+import { Button, Group, LoadingOverlay, Title } from "@mantine/core";
 import { Table } from "../components/Table";
 import { getActors } from "./global.api";
+import { Link } from "react-router-dom";
 
 function Actors() {
   const actorsQuery = useQuery({
@@ -13,7 +14,13 @@ function Actors() {
 
   return (
     <div>
-      <Title mb="md"> Actors (movie cast) </Title>
+      <Group mb="md" justify="space-between">
+        <Title> Actors (movie cast) </Title>
+
+        <Button component={Link} to={"/create-actor"}>
+          Create New
+        </Button>
+      </Group>
 
       <LoadingOverlay visible={actorsQuery.isLoading} />
 

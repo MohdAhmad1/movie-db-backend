@@ -1,21 +1,21 @@
-import { useState } from "react";
 import {
-  Table,
-  ScrollArea,
-  UnstyledButton,
-  Group,
-  Text,
   Center,
+  Group,
+  ScrollArea,
+  Table,
+  Text,
   TextInput,
-  rem,
+  UnstyledButton,
   keys,
+  rem,
 } from "@mantine/core";
 import {
-  IconSelector,
   IconChevronDown,
   IconChevronUp,
   IconSearch,
+  IconSelector,
 } from "@tabler/icons-react";
+import { useLayoutEffect, useState } from "react";
 import classes from "./Table.module.css";
 
 type RowData = Record<string, string | number>;
@@ -88,6 +88,16 @@ function TableSort<T extends RowData[]>({ data, accessors }: Props<T>) {
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
+
+  useLayoutEffect(() => {
+    setSortedData(
+      sortData(data as unknown as RowData[], {
+        sortBy,
+        reversed: reverseSortDirection,
+        search,
+      }) as unknown as T
+    );
+  }, [data]);
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
