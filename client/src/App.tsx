@@ -1,7 +1,8 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
-import AuthenticatedLayout from "./components/AuthenticatedLayout";
+import AuthenticatedLayout from "./components/AuthenticatedLayout/AuthenticatedLayout";
+import Movies from "./pages/Movies";
 
 function App() {
   return (
@@ -11,7 +12,11 @@ function App() {
         <Route path="signup" element={<Signup />} />
       </Route>
 
-      <Route path="/" element={<AuthenticatedLayout />}></Route>
+      <Route path="/" element={<AuthenticatedLayout />}>
+        <Route index element={<Navigate to="/movies" />} />
+
+        <Route path="movies" element={<Movies />} />
+      </Route>
     </Routes>
   );
 }
