@@ -1,3 +1,60 @@
+import axios, {
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
+
 export enum CONSTANTS {
-  BaseURL = "http://localhost:3000",
+  ApiBaseURL = "http://localhost:3000",
 }
+
+export const axiosInstance = axios.create({
+  baseURL: CONSTANTS.ApiBaseURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+export function getToken() {
+  const token = JSON.parse(localStorage.getItem("auth")!);
+  return token as { accessToken: string; refreshToken: string };
+}
+
+let _authorizing: Promise<void | AxiosResponse<unknown, unknown>> | null = null;
+
+axiosInstance.interceptors.request.use((config) => {
+  const token = getToken();
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token.accessToken}`;
+  }
+  return config;
+});
+
+axiosInstance.interceptors.response.use(undefined, (error: AxiosError) => {
+  const token = getToken();
+
+  debugger;
+
+  _authorizing ??= axiosInstance
+    .post(`${CONSTANTS.ApiBaseURL}/auth/refresh-roken`, {
+      refreshToken: token?.refreshToken,
+    })
+    .then(({ data }) => {
+      localStorage.setItem("token", JSON.stringify(data));
+    })
+    .finally(() => (_authorizing = null))
+    .catch((error) => {
+      localStorage.clear();
+      window.location.assign("/auth/login");
+      return Promise.reject(error);
+    });
+
+  const originalRequestConfig =
+    error.config as InternalAxiosRequestConfig<unknown>;
+  delete originalRequestConfig.headers.Authorization;
+
+  return _authorizing?.then(() => axiosInstance.request(originalRequestConfig));
+});
+
+export { axiosInstance as axios };

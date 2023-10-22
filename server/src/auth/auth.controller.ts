@@ -71,7 +71,7 @@ export class AuthController {
       },
     });
 
-    const accessToken = this.tokenService.generateAccessToken(user.id);
+    const accessToken = await this.tokenService.generateAccessToken(user.id);
 
     return {
       accessToken,

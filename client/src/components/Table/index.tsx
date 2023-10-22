@@ -163,7 +163,7 @@ function TableSort<T extends RowData[]>({ data, accessors }: Props<T>) {
             rows
           ) : (
             <Table.Tr>
-              <Table.Td colSpan={Object.keys(data[0]).length}>
+              <Table.Td colSpan={data[0] ? Object.keys(data[0]).length : 1}>
                 <Text fw={500} ta="center">
                   Nothing found
                 </Text>

@@ -5,8 +5,6 @@ import { Navbar } from "./Navbar";
 function AuthenticatedLayout() {
   const token = localStorage.getItem("auth");
 
-  console.log("aw");
-
   if (!token) {
     return <Navigate to="/auth/login" />;
   }

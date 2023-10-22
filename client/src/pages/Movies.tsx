@@ -1,21 +1,19 @@
+import { useQuery } from "@tanstack/react-query";
 import { Table } from "../components/Table";
+import { getMovies } from "./global.api";
+import { LoadingOverlay } from "@mantine/core";
 
 export default function Movies() {
+  const movieQuery = useQuery({
+    queryKey: ["get-movies"],
+    queryFn: getMovies,
+  });
+
   return (
     <div>
-      Movies
-      <br />
-      <br />
-      <br />
-      <Table
-        data={[
-          { id: "22", name: "23Ahmad", x: 4 },
-          { id: "1", name: "Mohd Ahmad", x: 3 },
-          { id: 2, name: "D", x: 1 },
-          { id: 3, name: "e", x: 0 },
-        ]}
-        accessors={["name", "x"]}
-      />
+      <LoadingOverlay visible={movieQuery.isLoading} />
+
+      <Table data={movieQuery.data ?? []} accessors={["name", "x"]} />
     </div>
   );
 }
