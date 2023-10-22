@@ -1,5 +1,6 @@
 import { axios } from "../global";
 import { CreateActorOrGenreSchema } from "../schema/create-actor-genre.schema";
+import { CreateMovieSchema } from "../schema/create-movie.schema";
 
 export function getMovies() {
   return axios.get("/movies").then((res) => res.data);
@@ -19,4 +20,8 @@ export function createActor(body: Zod.infer<typeof CreateActorOrGenreSchema>) {
 
 export function createGenre(body: Zod.infer<typeof CreateActorOrGenreSchema>) {
   return axios.post("/genre", body).then((res) => res.data);
+}
+
+export function createMovie(body: Zod.infer<typeof CreateMovieSchema>) {
+  return axios.post("/movies", body).then((res) => res.data);
 }

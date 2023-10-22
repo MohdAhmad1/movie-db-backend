@@ -35,7 +35,7 @@ function CreateActorOrGenre(props: { type: "genre" | "actor" }) {
     <Container size={420} className={classes.container}>
       <div>
         <Title ta="center" className={classes.title}>
-          Create New Actor
+          Create New {props.type}
         </Title>
 
         <Paper

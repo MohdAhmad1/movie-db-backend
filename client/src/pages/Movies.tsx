@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Table } from "../components/Table";
 import { getMovies } from "./global.api";
-import { Button, LoadingOverlay } from "@mantine/core";
+import { Button, Group, LoadingOverlay, Title } from "@mantine/core";
 import { Link } from "react-router-dom";
 
 export default function Movies() {
@@ -12,9 +12,13 @@ export default function Movies() {
 
   return (
     <div>
-      <Button mb={"xl"} component={Link} to={"/create-movie"}>
-        Create Movie
-      </Button>
+      <Group mb="md" justify="space-between">
+        <Title> Movies </Title>
+
+        <Button component={Link} to={"/create-movie"}>
+          Create New
+        </Button>
+      </Group>
 
       <LoadingOverlay visible={movieQuery.isLoading} />
 

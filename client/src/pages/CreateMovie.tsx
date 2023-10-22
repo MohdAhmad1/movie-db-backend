@@ -1,35 +1,65 @@
 import {
-  Anchor,
   Button,
   Container,
+  MultiSelect,
+  NumberInput,
   Paper,
-  PasswordInput,
-  Text,
+  Select,
+  Stack,
   TextInput,
   Title,
 } from "@mantine/core";
-import { Link, useNavigate } from "react-router-dom";
-// import classes from "./AuthenticationTitle.module.css";
+import { DatePickerInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
-// import { LoginSchema } from "./auth.schema";
-import { useMutation } from "@tanstack/react-query";
-// import { loginApiCall } from "./auth.api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
+import { CreateMovieSchema } from "../schema/create-movie.schema";
+import { createMovie, getActors, getGenres } from "./global.api";
+import classes from "./global.module.css";
+
+import "@mantine/dates/styles.css";
 
 function CreateMovie() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  const form = useForm<Zod.infer<typeof LoginSchema>>({
-    validate: zodResolver(LoginSchema),
+  const genreQuery = useQuery({
+    queryKey: ["get-genres"],
+    queryFn: getGenres,
+    select(data) {
+      return data.map((genre: Record<string, unknown>) => ({
+        label: genre.name,
+        value: genre.id,
+      }));
+    },
+  });
+
+  const actorsQuery = useQuery({
+    queryKey: ["get-actors"],
+    queryFn: getActors,
+    select(data) {
+      return data.map((actors: Record<string, unknown>) => ({
+        label: actors.name,
+        value: actors.id,
+      }));
+    },
+  });
+
+  const form = useForm<Zod.infer<typeof CreateMovieSchema>>({
+    validate: zodResolver(CreateMovieSchema),
   });
 
   const mutation = useMutation({
-    mutationKey: ["login"],
-    mutationFn: loginApiCall,
+    mutationKey: ["create-movie"],
+    mutationFn: createMovie,
 
-    onSuccess(data) {
-      localStorage.setItem("auth", JSON.stringify(data));
-      navigate("/");
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: ["get-movies"],
+      });
+
+      navigate(-1);
     },
 
     onError(error) {
@@ -42,19 +72,14 @@ function CreateMovie() {
     },
   });
 
+  console.log(form.errors);
+
   return (
     <Container size={420} className={classes.container}>
       <div>
         <Title ta="center" className={classes.title}>
-          Welcome back!
+          Create Movie
         </Title>
-
-        <Text c="dimmed" size="sm" ta="center" mt={5}>
-          Do not have an account yet?{" "}
-          <Anchor size="sm" component={Link} to="/auth/signup">
-            Create account
-          </Anchor>
-        </Text>
 
         <Paper
           withBorder
@@ -65,24 +90,52 @@ function CreateMovie() {
           component="form"
           onSubmit={form.onSubmit((vals) => mutation.mutate(vals))}
         >
-          <TextInput
-            label="Email"
-            placeholder="john@doe.com"
-            required
-            {...form.getInputProps("email")}
-          />
+          <Stack gap={"10px"}>
+            <TextInput
+              label="Name"
+              placeholder="Movie Name"
+              required
+              {...form.getInputProps("name")}
+            />
 
-          <PasswordInput
-            label="Password"
-            placeholder="Your password"
-            required
-            mt="md"
-            {...form.getInputProps("password")}
-          />
+            <NumberInput
+              label="Rating"
+              placeholder="eg: 7.9"
+              max={10}
+              min={0}
+              decimalScale={1}
+              required
+              {...form.getInputProps("rating")}
+            />
 
-          <Button fullWidth mt="xl" type="submit" loading={mutation.isPending}>
-            Sign in
-          </Button>
+            <DatePickerInput
+              label="Release Date"
+              placeholder="10/10/2002"
+              required
+              {...form.getInputProps("releaseDate")}
+            />
+
+            <Select
+              data={genreQuery.data ?? []}
+              label="Genre"
+              {...form.getInputProps("genre")}
+            />
+
+            <MultiSelect
+              data={actorsQuery.data ?? []}
+              label="Cast"
+              {...form.getInputProps("casts")}
+            />
+
+            <Button
+              fullWidth
+              mt="xl"
+              type="submit"
+              loading={mutation.isPending}
+            >
+              Add movie
+            </Button>
+          </Stack>
         </Paper>
       </div>
     </Container>
