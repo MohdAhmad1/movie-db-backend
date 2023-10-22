@@ -25,3 +25,7 @@ export function createGenre(body: Zod.infer<typeof CreateActorOrGenreSchema>) {
 export function createMovie(body: Zod.infer<typeof CreateMovieSchema>) {
   return axios.post("/movies", body).then((res) => res.data);
 }
+
+export function deleteMovieApiCall(id: string) {
+  return axios.delete(`/movies/${id}`).then((res) => res.data);
+}
