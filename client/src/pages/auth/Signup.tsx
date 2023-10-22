@@ -9,10 +9,42 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { Link } from "react-router-dom";
+import { useForm, zodResolver } from "@mantine/form";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import classes from "./AuthenticationTitle.module.css";
+import { signupApiCall } from "./auth.api";
+import { SignupSchema } from "./auth.schema";
 
 function Signup() {
+  const navigate = useNavigate();
+
+  const form = useForm<Zod.infer<typeof SignupSchema>>({
+    validate: zodResolver(SignupSchema),
+  });
+
+  const mutation = useMutation({
+    mutationKey: ["signup"],
+    mutationFn: signupApiCall,
+
+    onSuccess(data) {
+      localStorage.setItem("auth", JSON.stringify(data));
+      navigate("/");
+    },
+
+    onError(error) {
+      console.log(error);
+
+      form.setErrors({
+        email:
+          (error as AxiosError)?.response?.status === 409
+            ? "email already exists"
+            : "Internal server error",
+      });
+    },
+  });
+
   return (
     <Container size={420} className={classes.container}>
       <div>
@@ -27,20 +59,40 @@ function Signup() {
           </Anchor>
         </Text>
 
-        <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+        <Paper
+          withBorder
+          shadow="md"
+          p={30}
+          mt={30}
+          radius="md"
+          component="form"
+          onSubmit={form.onSubmit((values) => mutation.mutate(values))}
+        >
           <Stack gap={"10px"}>
-            <TextInput label="First Name" placeholder="John" required />
-            <TextInput label="Last Name" placeholder="Doe" required />
-            <TextInput label="Email" placeholder="john@doe.com" required />
+            <TextInput
+              label="First Name"
+              placeholder="John"
+              {...form.getInputProps("firstName")}
+            />
+            <TextInput
+              label="Last Name"
+              placeholder="Doe"
+              {...form.getInputProps("lastName")}
+            />
+            <TextInput
+              label="Email"
+              placeholder="john@doe.com"
+              {...form.getInputProps("email")}
+            />
 
             <PasswordInput
               label="Password"
               placeholder="Your password"
-              required
+              {...form.getInputProps("password")}
             />
           </Stack>
 
-          <Button fullWidth mt="xl">
+          <Button fullWidth mt="xl" loading={mutation.isPending} type="submit">
             Sign in
           </Button>
         </Paper>

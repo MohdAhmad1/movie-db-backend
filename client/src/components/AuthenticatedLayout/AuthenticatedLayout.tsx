@@ -1,8 +1,16 @@
 import { AppShell } from "@mantine/core";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { Navbar } from "./Navbar";
 
 function AuthenticatedLayout() {
+  const token = localStorage.getItem("auth");
+
+  console.log("aw");
+
+  if (!token) {
+    return <Navigate to="/auth/login" />;
+  }
+
   return (
     <AppShell navbar={{ width: 300, breakpoint: "sm" }} padding="md">
       <Navbar />

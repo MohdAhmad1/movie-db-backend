@@ -1,6 +1,6 @@
 import {
-  BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Post,
   UnauthorizedException,
@@ -55,7 +55,7 @@ export class AuthController {
     const exsist = await this.userService.userExsist(creds.email);
 
     if (exsist)
-      throw new BadRequestException('user with this email already exsist');
+      throw new ConflictException('user with this email already exsist');
 
     const refreshToken = this.tokenService.generateRefreshToken();
 
