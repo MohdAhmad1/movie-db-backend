@@ -13,7 +13,9 @@ import { LoginDTO } from './dto/login.dto';
 import { RefreshTokenDTO } from './dto/refresh-token.dto';
 import { RegisterDTO } from './dto/register.dto';
 import { TokenService } from './token.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(
