@@ -12,8 +12,11 @@ import { UpdateMovieDTO } from './dto/update-movie.dto';
 export class MovieService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
+  findAll(user: Omit<User, 'password'>) {
     return this.prisma.movie.findMany({
+      where: {
+        ownerId: user.id,
+      },
       include: {
         genre: true,
         casts: true,

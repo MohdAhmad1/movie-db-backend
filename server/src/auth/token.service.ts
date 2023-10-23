@@ -16,7 +16,7 @@ export class TokenService {
         sub,
         issuer: 'https://movies.db.com', // to be replaced by env variables,
         audience: 'https://movies.db.com',
-        exp: Date.now() + Number(process.env.JWT_EXPIRY), // 3hours from now
+        exp: Date.now() + Number(5000), // 3hours from now
         iat: Date.now(),
       },
       {
@@ -47,7 +47,7 @@ export class TokenService {
     };
   }
 
-  private async deleteRefreshToken(token: string) {
+  async deleteRefreshToken(token: string) {
     await this.prisma.refreshTokens.delete({ where: { token } });
   }
 }

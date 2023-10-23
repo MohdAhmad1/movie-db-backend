@@ -7,6 +7,7 @@ import CreateMovie from "./pages/CreateMovie";
 import Genre from "./pages/Genre";
 import Actors from "./pages/Actors";
 import CreateActorOrGenre from "./pages/CreateActor";
+import UpdateMovie from "./pages/UpdateMovie";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route index element={<Navigate to="/movies" />} />
 
         <Route path="movies" element={<Movies />} />
+        <Route path="movies/edit/:movieId" element={<UpdateMovie />} />
         <Route path="create-movie" element={<CreateMovie />} />
 
         <Route path="genres" element={<Genre />} />

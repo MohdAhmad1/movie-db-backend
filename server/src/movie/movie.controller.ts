@@ -20,8 +20,8 @@ export class MovieController {
 
   @Get()
   @UseGuards(AuthGuard)
-  findAll() {
-    return this.movieService.findAll();
+  findAll(@Req() req: any) {
+    return this.movieService.findAll(req.user);
   }
 
   @Post()

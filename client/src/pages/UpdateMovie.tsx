@@ -13,16 +13,24 @@ import { DatePickerInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { CreateMovieSchema } from "../schema/create-movie.schema";
-import { createMovie, getActors, getGenres } from "./global.api";
+import { getActors, getGenres, updateMovie } from "./global.api";
 import classes from "./global.module.css";
 
 import "@mantine/dates/styles.css";
 
-function CreateMovie() {
+function UpdateMovie() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const params = useParams();
+  const location = useLocation();
+
   const genreQuery = useQuery({
     queryKey: ["get-genres"],
     queryFn: getGenres,
@@ -47,11 +55,20 @@ function CreateMovie() {
 
   const form = useForm<Zod.infer<typeof CreateMovieSchema>>({
     validate: zodResolver(CreateMovieSchema),
+    initialValues: {
+      name: location.state?.title,
+      rating: location.state?.rating,
+      genre: location.state?.genre?.id,
+      releaseDate: new Date(location.state?.releaseDate),
+      casts: location.state?.casts?.map(
+        (cast: Record<string, never>) => cast.id
+      ),
+    },
   });
 
   const mutation = useMutation({
     mutationKey: ["create-movie"],
-    mutationFn: createMovie,
+    mutationFn: updateMovie,
 
     onSuccess() {
       queryClient.invalidateQueries({
@@ -62,20 +79,21 @@ function CreateMovie() {
     },
 
     onError(error) {
-      form.setErrors({
-        email:
-          (error as AxiosError)?.response?.status === 401
-            ? "Invalid email or password"
-            : "Internal server error",
-      });
+      console.log(error?.response?.data?.message ?? error.message);
+
+      alert(error?.message);
     },
   });
+
+  if (!location.state || !params.movieId) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <Container size={420} className={classes.container}>
       <div>
         <Title ta="center" className={classes.title}>
-          Create Movie
+          Update Movie
         </Title>
 
         <Paper
@@ -85,7 +103,9 @@ function CreateMovie() {
           mt={30}
           radius="md"
           component="form"
-          onSubmit={form.onSubmit((vals) => mutation.mutate(vals))}
+          onSubmit={form.onSubmit((vals) =>
+            mutation.mutate({ movieId: params.movieId!, body: vals })
+          )}
         >
           <Stack gap={"10px"}>
             <TextInput
@@ -130,7 +150,7 @@ function CreateMovie() {
               type="submit"
               loading={mutation.isPending}
             >
-              Add movie
+              Update movie
             </Button>
           </Stack>
         </Paper>
@@ -139,4 +159,4 @@ function CreateMovie() {
   );
 }
 
-export default CreateMovie;
+export default UpdateMovie;

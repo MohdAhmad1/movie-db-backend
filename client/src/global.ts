@@ -32,14 +32,18 @@ axiosInstance.interceptors.request.use((config) => {
 });
 
 axiosInstance.interceptors.response.use(undefined, (error: AxiosError) => {
+  if (error.response?.status !== 401) {
+    throw error;
+  }
+
   const token = getToken();
 
-  _authorizing ??= axiosInstance
-    .post(`${CONSTANTS.ApiBaseURL}/auth/refresh-roken`, {
-      refreshToken: token?.refreshToken,
+  _authorizing ??= axios
+    .post(`${CONSTANTS.ApiBaseURL}/auth/refresh-token`, {
+      refresh_token: token?.refreshToken,
     })
     .then(({ data }) => {
-      localStorage.setItem("token", JSON.stringify(data));
+      localStorage.setItem("auth", JSON.stringify(data));
     })
     .finally(() => (_authorizing = null))
     .catch((error) => {

@@ -29,3 +29,12 @@ export function createMovie(body: Zod.infer<typeof CreateMovieSchema>) {
 export function deleteMovieApiCall(id: string) {
   return axios.delete(`/movies/${id}`).then((res) => res.data);
 }
+
+export function updateMovie(payload: {
+  movieId: string;
+  body: Zod.infer<typeof CreateMovieSchema>;
+}) {
+  return axios
+    .patch(`/movies/${payload.movieId}`, payload.body)
+    .then((res) => res.data);
+}

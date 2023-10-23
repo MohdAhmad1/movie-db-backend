@@ -2,7 +2,9 @@ import {
   Body,
   ConflictException,
   Controller,
+  Get,
   Post,
+  Query,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
@@ -105,5 +107,11 @@ export class AuthController {
       accessToken,
       refreshToken,
     };
+  }
+
+  @Get('logout')
+  async logout(@Query('rt') refreshToken: string) {
+    await this.tokenService.deleteRefreshToken(refreshToken).catch(() => {});
+    return true;
   }
 }

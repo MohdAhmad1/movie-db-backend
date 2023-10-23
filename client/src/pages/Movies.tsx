@@ -8,10 +8,11 @@ import {
   LoadingOverlay,
   Title,
 } from "@mantine/core";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
 
 export default function Movies() {
+  const navigate = useNavigate();
   const movieQuery = useQuery({
     queryKey: ["get-movies"],
     queryFn: getMovies,
@@ -68,7 +69,11 @@ export default function Movies() {
             render(data) {
               return (
                 <Group>
-                  <ActionIcon>
+                  <ActionIcon
+                    onClick={() => {
+                      navigate(`edit/${data.id}`, { state: data });
+                    }}
+                  >
                     <IconPencil size={18} />
                   </ActionIcon>
 
